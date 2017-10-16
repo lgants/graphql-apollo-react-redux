@@ -5,6 +5,9 @@ const resolvers = {
     author(_, args) {
       return Author.find({ where: args });
     },
+    authors() { // the query "authors" means returning all authors!
+      return Author.findAll({})
+    }
     getFortuneCookie() {
       return FortuneCookie.getOne()
     }

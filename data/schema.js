@@ -15,6 +15,7 @@ type Post {
 type Query {
   author(firstName: String, lastName: String): Author
   getFortuneCookie: String
+  authors: [Author] // 'authors' query should return an array of Author
 }
 schema {
   query: Query

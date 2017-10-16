@@ -1,6 +1,6 @@
 import React from 'react'
-import { connect } from 'react-redux'
-import { bindActionCreators } from 'redux'
+import { connect } from 'react-apollo'
+import gql from 'graphql-tag'
 
 export class HomeView extends React.Component {
   constructor(props) {
@@ -8,29 +8,39 @@ export class HomeView extends React.Component {
   }
 
   render () {
+    const author = this.props.data.author
+    if (!author) {
+      return <h1>Loading</h1>
+    }
     return (
-      <div className='home'>
-        <h1>Hello World</h1>
+      <div key={'author-'+idx}>
+        <h1>{author.firstName}'s posts</h1>
+        {author.posts && author.posts.map((post, idx) => (
+          <li key={idx}>{post.title}</li>
+        ))}
       </div>
     )
   }
 }
 
-const mapStateToProps = (state, { params }) => ({
-
-})
-
-const mapDispatchToProps = (dispatch) => {
-  const actions = {
-
-  }
-
+// NOTE: This will be automatically fired when the component is rendered, sending this exact GraphQL query to the backend.
+const mapQueriesToProps = ({ ownProps, state }) => {
   return {
-    actions: bindActionCreators(actions, dispatch)
+    data: {
+      query: gql`
+        query {
+          author(firstName:"Edmond", lastName: "Jones"){
+            firstName
+            posts {
+              title
+            }
+          }
+        }
+      `
+    }
   }
 }
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(HomeView)
+export default connect({
+  mapQueriesToProps
+})(HomeView)
